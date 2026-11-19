@@ -19,4 +19,7 @@
         lanUrl: ''
         # 公网入口。手机不在同一个 Wi-Fi 时只有这个能用。
         # 留空 = 面板不显示「公网」标签，只给局域网。
-        publicUrl: 'https://dsh.ht34robot.cyou'
+        #
+        # ⚠️ 不要在这里预置任何真实域名 —— 这是要分发的源码。
+        # 填自己的反代地址，例如 'https://dsh.example.com'。
+        publicUrl: ''

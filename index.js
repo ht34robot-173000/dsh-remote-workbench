@@ -178,7 +178,7 @@ function detectLanUrl(port) {
  * 于是所有公网请求在 socket 层都长得像本机。实测过：
  *
  *     http://127.0.0.1:19387/rw/pair/new  → 200 {"code":"862741"}
- *     https://dsh.ht34robot.cyou/rw/pair/new → 200 {"code":"555247"}   ← 不该成功
+ *     https://dsh.example.com/rw/pair/new → 200 {"code":"555247"}   ← 不该成功
  *
  * 后果不是「能看到配对码」这么轻：知道域名的人可以自己取码、自己配对，
  * 拿到完整设备 cookie → 文件全读写、发会话消息、远程重启 DSH。
@@ -189,7 +189,7 @@ function detectLanUrl(port) {
  *   1. **反代痕迹**：只要出现 CF-Connecting-IP / X-Forwarded-For / Forwarded
  *      任一头，就是经过了隧道或反代，直接拒。（cloudflared 必然带 CF-Connecting-IP）
  *   2. **Host 白名单**：Host 必须是回环地址本身。经隧道进来的是
- *      `dsh.ht34robot.cyou`，直接不匹配。
+ *      `dsh.example.com`，直接不匹配。
  *   3. **socket 地址**：最后才看 remoteAddress 是不是回环。
  *
  * 单独任何一条都能被绕过，三条叠加才是纵深防御。
@@ -624,3 +624,4 @@ export function apply(ctx, config = {}) {
     for (const d of disposers) d()
   }
 }
+

@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="theme-color" content="#202020">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>远程工作台</title>
+<link rel="stylesheet" href="/rw/assets/theme.css">
+<link rel="stylesheet" href="/rw/assets/app.css">
+</head>
+<body>
+
+<!-- Mica 材质层 -->
+<div class="mica" aria-hidden="true"></div>
+
+<div id="app">
+
+  <!-- 标题栏 -->
+  <header class="titlebar">
+    <button class="btn btn-icon menu-btn" id="menuBtn" title="显示会话列表" aria-label="菜单">☰</button>
+    <div class="brand">
+      <span class="brand-dot"></span>
+      <span>远程工作台</span>
+    </div>
+    <span class="spacer"></span>
+    <div class="actions">
+      <button class="btn btn-icon" id="themeBtn" title="切换亮暗主题" aria-label="主题">◐</button>
+      <button class="btn btn-icon" id="pairBtn" title="配对设备" aria-label="配对">⚿</button>
+    </div>
+  </header>
+
+  <div class="body">
+
+    <!-- 侧栏 -->
+    <aside class="sidebar" id="sidebar">
+      <nav class="nav" role="tablist">
+        <button class="nav-item" role="tab" data-view="chat" aria-selected="true">
+          <span class="ico">💬</span><span>对话</span>
+        </button>
+        <button class="nav-item" role="tab" data-view="files" aria-selected="false">
+          <span class="ico">📁</span><span>文件</span>
+        </button>
+      </nav>
+      <hr class="sep" style="margin:0 8px">
+      <div class="sidebar-scroll" id="sidebarScroll">
+        <div id="sessionList" style="padding-top:6px"></div>
+        <div id="archiveWrap" style="display:none">
+          <div class="group-label" id="archiveLabel" data-collapsed="true">
+            <span class="caret">▼</span>
+            <span>已归档</span>
+            <span class="chip" id="archiveCount">0</span>
+          </div>
+          <div id="archivedList" style="display:none"></div>
+        </div>
+      </div>
+    </aside>
+    <div class="sidebar-scrim" id="sidebarScrim"></div>
+
+    <!-- 主区 -->
+    <main class="main">
+
+      <!-- 对话视图 -->
+      <section id="viewChat" style="display:flex;flex-direction:column;flex:1;min-height:0">
+        <div class="commandbar">
+          <span class="title" id="chatTitle">选择一个会话</span>
+          <span class="spacer" style="flex:1"></span>
+          <span class="chip" id="chatModel" style="display:none"></span>
+          <button class="btn btn-icon" id="steerToggle" title="插话（不打断当前任务）" style="display:none">✎</button>
+          <button class="btn btn-icon" id="cancelBtn" title="中断" style="display:none">■</button>
+        </div>
+
+        <div class="content">
+          <div class="timeline" id="timeline">
+            <div class="empty">
+              <div class="big">还没有打开会话</div>
+              <div>从左侧选择一个会话，或在下方直接新建对话</div>
+            </div>
+          </div>
+
+          <div class="composer">
+            <!-- 插话条 -->
+            <div class="steerbar" id="steerbar">
+              <div class="hint">
+                <span>✎ 插话：注入到正在运行的任务，不打断它</span>
+                <span class="spacer" style="flex:1"></span>
+                <button class="btn btn-icon" id="steerClose" style="height:22px;min-height:22px;width:22px">✕</button>
+              </div>
+              <textarea class="textarea" id="steerText" rows="1"
+                placeholder="例如：把按钮改成圆角 / 这里用 Redux 而不是 Context"></textarea>
+              <div style="display:flex;gap:6px;justify-content:flex-end;margin-top:6px">
+                <button class="btn btn-accent" id="steerSend" style="height:28px;min-height:28px">注入</button>
+              </div>
+            </div>
+
+            <div class="attach-row" id="attachRow"></div>
+
+            <div class="composer-row">
+              <button class="btn btn-icon" id="attachBtn" title="添加图片/文件" style="height:40px;width:40px;min-height:40px">＋</button>
+              <textarea id="composerInput" rows="1" placeholder="输入消息，/ 触发命令"></textarea>
+              <button class="btn btn-accent send-btn" id="sendBtn" title="发送">
+                <span class="arrow">➤</span>
+              </button>
+            </div>
+            <input type="file" id="filePicker" multiple accept="*/*" style="display:none">
+          </div>
+        </div>
+      </section>
+
+      <!-- 文件视图 -->
+      <section id="viewFiles" style="display:none;flex-direction:column;flex:1;min-height:0">
+        <div class="commandbar">
+          <button class="btn btn-icon" id="upBtn" title="上一级">↑</button>
+          <div class="crumbs" id="crumbs"></div>
+          <button class="btn btn-icon" id="refreshFs" title="刷新">↻</button>
+          <button class="btn btn-icon" id="newFolderBtn" title="新建文件夹">🗀</button>
+          <button class="btn btn-icon" id="newFileBtn" title="新建文件">🗋</button>
+          <button class="btn btn-icon" id="uploadBtn" title="上传到当前目录">⇧</button>
+        </div>
+        <div class="fs-list" id="fsList">
+          <div class="empty"><div class="big">载入中…</div></div>
+        </div>
+        <input type="file" id="fsUploadPicker" multiple accept="*/*" style="display:none">
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- 配对弹层 -->
+<div class="sheet-backdrop" id="pairSheet">
+  <div class="sheet">
+    <div class="sheet-head">
+      <span class="t">设备配对</span>
+      <button class="btn btn-icon" id="pairClose">✕</button>
+    </div>
+    <div class="sheet-body">
+      <p class="muted tiny" style="margin:0 0 12px">
+        第一次在这台设备上使用时，需要先在<b>宿主机</b>上生成一个 6 位配对码，再填到下面。
+      </p>
+      <div id="pairStatus" class="tiny muted" style="margin-bottom:12px"></div>
+      <div id="pairHostArea">
+        <button class="btn" id="pairGenerate">在宿主机上生成配对码</button>
+        <div id="pairCodeBox" style="display:none;margin-top:14px">
+          <div class="pair-code" id="pairCodeText">------</div>
+          <div class="muted tiny" style="text-align:center;margin-top:8px" id="pairExpire"></div>
+        </div>
+      </div>
+      <hr class="sep">
+      <label class="tiny muted" style="display:block;margin-bottom:6px">配对码</label>
+      <input class="input" id="pairInput" inputmode="numeric" maxlength="6" placeholder="6 位数字">
+    </div>
+    <div class="sheet-foot">
+      <button class="btn" id="pairCancel">取消</button>
+      <button class="btn btn-accent" id="pairSubmit">配对</button>
+    </div>
+  </div>
+</div>
+
+<!-- 文件预览/编辑弹层 -->
+<div class="sheet-backdrop" id="fileSheet">
+  <div class="sheet" style="width:min(720px,100%)">
+    <div class="sheet-head">
+      <span class="t" id="fileSheetTitle">文件</span>
+      <button class="btn btn-icon" id="fileSheetClose">✕</button>
+    </div>
+    <div class="sheet-body" id="fileSheetBody"></div>
+    <div class="sheet-foot" id="fileSheetFoot"></div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toasts"></div>
+
+<script type="module" src="/rw/assets/app.js"></script>
+</body>
+</html>

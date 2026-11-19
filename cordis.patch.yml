@@ -1,0 +1,22 @@
+# dsh-remote-workbench bundle patch
+#
+# 独立的远程工作台，不依赖 dsh-mobile-plus。
+# 自带配对鉴权、会话 API、文件管理器全读写。
+- insert:
+    - id: remote-workbench
+      name: 'dsh-remote-workbench'
+      config:
+        enabled: true
+        # 允许无配对凭据时只读浏览（首次调试用；生产建议 false）
+        allowUnpairedRead: false
+        # 单文件上传上限（字节）
+        maxUploadBytes: 20971520
+        # 一次列目录最多返回多少项
+        maxDirEntries: 5000
+        # ── 配对二维码里装的地址 ──────────────────────────────
+        # 留空则自动探测本机第一个局域网 IPv4（192.168/10./172.16-31）。
+        # 多网卡机器探测可能挑错，那就手填。
+        lanUrl: ''
+        # 公网入口。手机不在同一个 Wi-Fi 时只有这个能用。
+        # 留空 = 面板不显示「公网」标签，只给局域网。
+        publicUrl: 'https://dsh.ht34robot.cyou'

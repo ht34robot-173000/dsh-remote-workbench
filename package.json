@@ -1,0 +1,37 @@
+{
+  "name": "dsh-remote-workbench",
+  "version": "0.2.0",
+  "description": "手机/远程端的 DSH 工作台：Win11 Fluent 界面、会话对话、批量上传、实时插话、宿主文件管理器全读写、亮暗主题，自带扫码配对面板。",
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": { "default": "./index.js" },
+    "./client": "./client.js",
+    "./package.json": "./package.json"
+  },
+  "engines": { "node": ">=20.3" },
+  "license": "MIT",
+  "keywords": [
+    "deepseek-harness", "dsh", "dsh-plugin", "remote", "mobile",
+    "workbench", "file-manager", "steer", "pairing", "qr"
+  ],
+  "dsh": {
+    "bundle": { "patch": "./cordis.patch.yml" },
+    "client": {
+      "platform": "web",
+      "inject": ["@deepseek-ai/dsh-client-ui-sidebar"]
+    }
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "lib",
+    "public",
+    "README.md"
+  ],
+  "meta": {
+    "title": "远程工作台",
+    "description": "在手机或远程浏览器里操作 DSH：Fluent 风格界面、对话与批量上传、运行中插话、宿主文件管理器（全读写）、亮暗主题、已归档会话隐藏。侧边栏底部带「配对我的手机」面板，出 6 位码和二维码。"
+  }
+}

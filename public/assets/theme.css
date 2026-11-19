@@ -1,0 +1,253 @@
+/**
+ * public/theme.css — Windows 11 Fluent 设计语言
+ *
+ * 参照 Fluent Design 的关键规格：
+ *  - Mica 材质：窗口底色取自壁纸色调，半透明 + 高斯模糊
+ *  - Acrylic：侧栏/浮层用更强模糊 + 噪点
+ *  - 圆角：窗口 8px，卡片 8px，控件 4px
+ *  - 分层阴影：Fluent 的阴影是「环境光 + 焦点」两层
+ *  - 控件高度 32px（标准），行高 40px
+ *  - 焦点视觉：2px 描边 + 1px 内描边（不是 outline）
+ */
+
+:root {
+  color-scheme: light dark;
+
+  /* —— 亮色（Fluent Light）—— */
+  --win-bg: 243 243 243;
+  --mica-base: 249 249 249;
+  --acrylic-tint: 252 252 252;
+  --card-bg: 255 255 255;
+  --card-bg-alt: 246 246 246;
+  --stroke: 0 0 0;
+  --stroke-alpha: 0.0578;
+  --stroke-strong-alpha: 0.1;
+  --text: 26 26 26;
+  --text-secondary: 96 96 96;
+  --text-tertiary: 138 138 138;
+  --accent: 0 95 184;
+  --accent-hover: 26 118 210;
+  --accent-pressed: 0 76 148;
+  --accent-text: 255 255 255;
+  --danger: 196 43 28;
+  --success: 16 124 16;
+  --warning: 157 93 0;
+  --selection: 0 95 184;
+  --shadow-ambient: 0 1px 2px rgba(0, 0, 0, .08);
+  --shadow-focus: 0 2px 8px rgba(0, 0, 0, .10);
+  --shadow-flyout: 0 8px 32px rgba(0, 0, 0, .18);
+  --noise-opacity: 0.015;
+  --code-bg: 245 245 245;
+  --scrollbar: 0 0 0;
+}
+
+:root[data-theme="dark"] {
+  /* —— 暗色（Fluent Dark）—— */
+  --win-bg: 32 32 32;
+  --mica-base: 44 44 44;
+  --acrylic-tint: 44 44 44;
+  --card-bg: 58 58 58;
+  --card-bg-alt: 50 50 50;
+  --stroke: 255 255 255;
+  --stroke-alpha: 0.0698;
+  --stroke-strong-alpha: 0.12;
+  --text: 255 255 255;
+  --text-secondary: 200 200 200;
+  --text-tertiary: 152 152 152;
+  --accent: 96 165 250;
+  --accent-hover: 130 185 255;
+  --accent-pressed: 70 140 230;
+  --accent-text: 0 0 0;
+  --danger: 255 122 107;
+  --success: 92 199 92;
+  --warning: 240 190 90;
+  --selection: 96 165 250;
+  --shadow-ambient: 0 1px 2px rgba(0, 0, 0, .3);
+  --shadow-focus: 0 2px 8px rgba(0, 0, 0, .4);
+  --shadow-flyout: 0 8px 32px rgba(0, 0, 0, .55);
+  --noise-opacity: 0.025;
+  --code-bg: 40 40 40;
+  --scrollbar: 255 255 255;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: "Segoe UI Variable Text", "Segoe UI Variable", "Segoe UI",
+               -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei UI",
+               "Microsoft YaHei", sans-serif;
+  font-size: 14px;
+  color: rgb(var(--text));
+  background: rgb(var(--win-bg));
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Mica 底：整个窗口的材质层 */
+.mica {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(1200px 700px at 15% -10%, rgba(var(--accent) / .10), transparent 60%),
+    radial-gradient(900px 600px at 90% 110%, rgba(var(--accent) / .07), transparent 55%),
+    rgb(var(--mica-base) / .82);
+  backdrop-filter: blur(60px) saturate(160%);
+  -webkit-backdrop-filter: blur(60px) saturate(160%);
+  z-index: 0;
+}
+
+/* Fluent 的微噪点，让磨砂不至于像塑料 */
+.mica::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: var(--noise-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+/* —— Acrylic 浮层（侧栏、对话框、下拉）—— */
+.acrylic {
+  background: rgb(var(--acrylic-tint) / .72);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid rgb(var(--stroke) / var(--stroke-alpha));
+  box-shadow: var(--shadow-flyout);
+}
+
+/* —— 卡片 —— */
+.card {
+  background: rgb(var(--card-bg) / .68);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgb(var(--stroke) / var(--stroke-alpha));
+  border-radius: 8px;
+  box-shadow: var(--shadow-ambient);
+  transition: background .12s ease, box-shadow .12s ease, border-color .12s ease;
+}
+.card:hover {
+  background: rgb(var(--card-bg) / .82);
+  box-shadow: var(--shadow-focus);
+}
+
+/* —— 按钮：Fluent 的控件有 1px 描边 + 抬起状态色 —— */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 4px;
+  border: 1px solid rgb(var(--stroke) / var(--stroke-strong-alpha));
+  background: rgb(var(--card-bg) / .7);
+  color: rgb(var(--text));
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background .1s ease, border-color .1s ease, transform .06s ease;
+  white-space: nowrap;
+  user-select: none;
+}
+.btn:hover { background: rgb(var(--card-bg) / .92); }
+.btn:active { transform: scale(.985); background: rgb(var(--card-bg-alt) / .95); }
+.btn:disabled { opacity: .45; pointer-events: none; }
+
+.btn-accent {
+  background: rgb(var(--accent));
+  border-color: transparent;
+  color: rgb(var(--accent-text));
+  font-weight: 600;
+}
+.btn-accent:hover { background: rgb(var(--accent-hover)); }
+.btn-accent:active { background: rgb(var(--accent-pressed)); }
+
+.btn-danger { color: rgb(var(--danger)); }
+.btn-danger:hover { background: rgb(var(--danger) / .12); border-color: rgb(var(--danger) / .3); }
+
+.btn-icon {
+  width: 32px;
+  padding: 0;
+  min-height: 32px;
+}
+
+/* —— 输入框：Fluent 的 TextBox 底边强调线 —— */
+.input, .textarea, select.input {
+  width: 100%;
+  min-height: 32px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  border: 1px solid rgb(var(--stroke) / var(--stroke-strong-alpha));
+  border-bottom: 2px solid rgb(var(--stroke) / calc(var(--stroke-strong-alpha) + .05));
+  background: rgb(var(--card-bg) / .6);
+  color: rgb(var(--text));
+  font: inherit;
+  font-size: 13px;
+  outline: none;
+  transition: border-color .12s ease, background .12s ease;
+}
+.input:focus, .textarea:focus, select.input:focus {
+  background: rgb(var(--card-bg) / .9);
+  border-bottom-color: rgb(var(--accent));
+}
+.textarea { resize: none; line-height: 1.55; font-family: inherit; }
+.input::placeholder, .textarea::placeholder { color: rgb(var(--text-tertiary)); }
+
+/* —— 焦点视觉：Fluent 用双层描边而不是 outline —— */
+:focus-visible {
+  outline: 2px solid rgb(var(--accent));
+  outline-offset: 1px;
+}
+
+/* —— 滚动条：Fluent 的细瘦样式 —— */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--scrollbar) / .18);
+  border-radius: 5px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover { background: rgb(var(--scrollbar) / .32); background-clip: content-box; }
+
+/* —— 通用小件 —— */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 11px;
+  background: rgb(var(--card-bg) / .8);
+  border: 1px solid rgb(var(--stroke) / var(--stroke-alpha));
+  font-size: 11px;
+  color: rgb(var(--text-secondary));
+}
+
+.muted { color: rgb(var(--text-secondary)); }
+.tiny { font-size: 12px; }
+.mono { font-family: "Cascadia Code", Consolas, "SF Mono", Menlo, monospace; }
+
+.sep {
+  height: 1px;
+  background: rgb(var(--stroke) / var(--stroke-alpha));
+  border: 0;
+  margin: 8px 0;
+}
+
+.spin {
+  width: 14px; height: 14px;
+  border: 2px solid rgb(var(--accent) / .25);
+  border-top-color: rgb(var(--accent));
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* 减少动效偏好 */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+}

@@ -783,18 +783,33 @@ window.__ModuleLoader__.load({
 
 
     /* ==================== 图标 ==================== */
-    function PhoneIcon() {
+    /*
+     * 和手机端 App 图标同一套语言：**对话气泡 + 终端提示符 ›_**
+     * （App 那边是深蓝底白色实心气泡，侧边栏这里是 currentColor 描边，
+     *  16px 下才不会有半像素糊边）。
+     *
+     * 原来是一个「手机」剪影。换成气泡后，桌面这边的入口和手机 App 图标
+     * 一眼能对上；「配对我的手机」这个文案仍然说明用途。
+     */
+    function RwMarkIcon() {
       return h(
         'svg',
         {
           viewBox: '0 0 24 24', width: 16, height: 16, fill: 'none',
-          stroke: 'currentColor', strokeWidth: 1.8,
+          stroke: 'currentColor', strokeWidth: 1.7,
           strokeLinecap: 'round', strokeLinejoin: 'round',
           'aria-hidden': true,
         },
         [
-          h('rect', { key: 'b', x: 6, y: 2, width: 12, height: 20, rx: 2.5 }),
-          h('line', { key: 'l', x1: 10.5, y1: 18.5, x2: 13.5, y2: 18.5 }),
+          // 气泡（带左下角小尾巴）
+          h('path', {
+            key: 'b',
+            d: 'M4.2 5.6h15.6a1.6 1.6 0 0 1 1.6 1.6v7.4a1.6 1.6 0 0 1-1.6 1.6H9.4l-4.1 3.1v-3.1H4.2a1.6 1.6 0 0 1-1.6-1.6V7.2a1.6 1.6 0 0 1 1.6-1.6Z',
+          }),
+          // 折线提示符
+          h('polyline', { key: 'c', points: '7.3,9.4 9.6,11.7 7.3,14' }),
+          // 光标横杠
+          h('line', { key: 'u', x1: 11.6, y1: 14, x2: 15.2, y2: 14 }),
         ],
       )
     }
@@ -1098,7 +1113,7 @@ window.__ModuleLoader__.load({
           font: 'inherit', fontSize: 13, textAlign: 'left',
           transition: 'background .12s ease',
         },
-      }, [h(PhoneIcon, { key: 'i' }), h('span', { key: 't' }, '配对我的手机')])
+      }, [h(RwMarkIcon, { key: 'i' }), h('span', { key: 't' }, '配对我的手机')])
     }
 
     return {
